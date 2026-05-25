@@ -1,0 +1,7 @@
+.env.local
+.env.prod
+__pycache__/
+*.pyc
+node_modules/
+staticfiles/
+
