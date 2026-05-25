@@ -26,11 +26,8 @@ export default function AddMemoryModal({ onClose, onCreated }) {
   const handleFiles = (newFiles) => {
     const arr = Array.from(newFiles);
     setFiles((prev) => [...prev, ...arr]);
-    arr.forEach((f) => {
-      const reader = new FileReader();
-      reader.onload = (e) => setPreviews((p) => [...p, { name: f.name, src: e.target.result }]);
-      reader.readAsDataURL(f);
-    });
+    const newPreviews = arr.map((f) => ({ name: f.name, src: URL.createObjectURL(f) }));
+    setPreviews((prev) => [...prev, ...newPreviews]);
   };
 
   const removeFile = (idx) => {
