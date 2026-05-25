@@ -30,7 +30,7 @@ def upload_file_to_s3(file_obj, filename):
         ExtraArgs={'ContentType': file_obj.content_type},
     )
     if settings.AWS_S3_CUSTOM_DOMAIN:
-        return f"http://{settings.AWS_S3_CUSTOM_DOMAIN}/{key}"
+        return f"https://{settings.AWS_S3_CUSTOM_DOMAIN}/{key}"
     return f"{settings.AWS_S3_ENDPOINT_URL}/{settings.AWS_STORAGE_BUCKET_NAME}/{key}"
 
 
