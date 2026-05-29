@@ -76,15 +76,21 @@ export default function MemoryViewer({ memory, onBack, onDelete }) {
             maxWidth: '100%',
           }}>
             <span style={{ fontSize: 14, animation: 'musicBounce 1s ease infinite' }}>♪</span>
-            <span style={{
-              fontSize: 13,
-              color: '#fff',
-              overflow: 'hidden',
-              textOverflow: 'ellipsis',
-              whiteSpace: 'nowrap',
-            }}>
+            <a
+              href={memory.youtube_url}
+              target="_blank"
+              rel="noopener noreferrer"
+              style={{
+                fontSize: 13,
+                color: '#fff',
+                overflow: 'hidden',
+                textOverflow: 'ellipsis',
+                whiteSpace: 'nowrap',
+                textDecoration: 'none',
+              }}
+            >
               {songTitle}
-            </span>
+            </a>
           </div>
         </div>
       )}
@@ -106,6 +112,11 @@ export default function MemoryViewer({ memory, onBack, onDelete }) {
         background: 'linear-gradient(transparent, rgba(0,0,0,0.8))',
         padding: '40px 24px 24px',
       }}>
+        {memory.memory_date && (
+          <div style={{ fontSize: 13, color: '#8e8e93', marginBottom: 4 }}>
+            {memory.memory_date}
+          </div>
+        )}
         <h2 style={{ fontSize: 22, fontWeight: 700, marginBottom: 6 }}>
           {memory.title}
         </h2>
