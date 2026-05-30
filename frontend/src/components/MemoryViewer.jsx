@@ -1,9 +1,11 @@
 import { useState, useEffect } from 'react';
 import SlideShow from './SlideShow';
 import YoutubePlayer from './YoutubePlayer';
+import EditMemoryModal from './EditMemoryModal';
 
-export default function MemoryViewer({ memory, onBack, onDelete }) {
+export default function MemoryViewer({ memory, onBack, onDelete, onUpdated }) {
   const [showConfirm, setShowConfirm] = useState(false);
+  const [showEdit, setShowEdit] = useState(false);
   const [songTitle, setSongTitle] = useState('');
 
   useEffect(() => {
@@ -95,17 +97,31 @@ export default function MemoryViewer({ memory, onBack, onDelete }) {
         </div>
       )}
 
-      <button
-        onClick={() => setShowConfirm(true)}
-        style={{
-          position: 'absolute', top: 16, right: 16, zIndex: 210,
-          background: 'rgba(255,59,48,0.6)', border: 'none', color: '#fff',
-          padding: '8px 16px', borderRadius: 20,
-          fontSize: 14, backdropFilter: 'blur(10px)',
-        }}
-      >
-        삭제
-      </button>
+      <div style={{
+        position: 'absolute', top: 16, right: 16, zIndex: 210,
+        display: 'flex', gap: 8,
+      }}>
+        <button
+          onClick={() => setShowEdit(true)}
+          style={{
+            background: 'rgba(255,255,255,0.2)', border: 'none', color: '#fff',
+            padding: '8px 16px', borderRadius: 20,
+            fontSize: 14, backdropFilter: 'blur(10px)',
+          }}
+        >
+          수정
+        </button>
+        <button
+          onClick={() => setShowConfirm(true)}
+          style={{
+            background: 'rgba(255,59,48,0.6)', border: 'none', color: '#fff',
+            padding: '8px 16px', borderRadius: 20,
+            fontSize: 14, backdropFilter: 'blur(10px)',
+          }}
+        >
+          삭제
+        </button>
+      </div>
 
       <div style={{
         position: 'absolute', bottom: 0, left: 0, right: 0, zIndex: 205,
@@ -126,6 +142,17 @@ export default function MemoryViewer({ memory, onBack, onDelete }) {
           </p>
         )}
       </div>
+
+      {showEdit && (
+        <EditMemoryModal
+          memory={memory}
+          onClose={() => setShowEdit(false)}
+          onUpdated={(updated) => {
+            setShowEdit(false);
+            onUpdated(updated);
+          }}
+        />
+      )}
 
       {showConfirm && (
         <div

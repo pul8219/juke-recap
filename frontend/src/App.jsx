@@ -82,6 +82,10 @@ export default function App() {
         memory={selectedMemory}
         onBack={() => setSelectedMemory(null)}
         onDelete={() => handleDelete(selectedMemory.id)}
+        onUpdated={(updated) => {
+          setSelectedMemory(updated);
+          loadMemories();
+        }}
       />
     );
   }

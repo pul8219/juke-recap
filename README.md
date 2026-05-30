@@ -38,14 +38,15 @@ Nginx가 앞에서 요청을 받아 프론트엔드/백엔드로 나눠줍니다
 **컴포넌트 구조:**
 
 ```
-App.jsx                   ← 최상위. 인증/라우팅/상태 관리
-├── LockScreen.jsx        ← PIN 입력 잠금 화면
-├── MemoryGrid.jsx        ← 추억 카드 목록 (그리드 레이아웃)
-│   └── MemoryCard.jsx    ← 개별 추억 카드 (썸네일 + 제목 + 날짜)
-├── MemoryViewer.jsx      ← 추억 상세 보기 (전체화면)
-│   ├── SlideShow.jsx     ← 사진 슬라이드쇼 (5초 자동 전환, 좌우 화살표, 썸네일 바)
-│   └── YoutubePlayer.jsx ← YouTube 배경음악 플레이어 (음소거/해제 버튼)
-└── AddMemoryModal.jsx    ← 새 추억 만들기 모달 (사진 업로드, YouTube URL 입력)
+App.jsx                    ← 최상위. 인증/라우팅/상태 관리
+├── LockScreen.jsx         ← PIN 입력 잠금 화면
+├── MemoryGrid.jsx         ← 추억 카드 목록 (그리드 레이아웃)
+│   └── MemoryCard.jsx     ← 개별 추억 카드 (썸네일 + 제목 + 날짜)
+├── MemoryViewer.jsx       ← 추억 상세 보기 (전체화면)
+│   ├── SlideShow.jsx      ← 사진 슬라이드쇼 (5초 자동 전환, 좌우 화살표, 썸네일 바)
+│   ├── YoutubePlayer.jsx  ← YouTube 배경음악 플레이어 (음소거/해제 버튼)
+│   └── EditMemoryModal.jsx← 추억 수정 모달 (제목, 날짜, 설명, 음악, 사진 추가/삭제)
+└── AddMemoryModal.jsx     ← 새 추억 만들기 모달 (사진 업로드, YouTube URL 입력)
 ```
 
 > **React 핵심 개념 간단 정리:**
@@ -73,6 +74,7 @@ App.jsx                   ← 최상위. 인증/라우팅/상태 관리
 | GET | `/api/memories/` | 전체 추억 목록 |
 | POST | `/api/memories/` | 새 추억 생성 (사진 포함) |
 | GET | `/api/memories/:id/` | 추억 상세 조회 |
+| PATCH | `/api/memories/:id/` | 추억 수정 (제목, 설명, 음악, 날짜, 사진 추가/삭제, 썸네일 변경) |
 | DELETE | `/api/memories/:id/` | 추억 삭제 (S3 사진도 함께 삭제) |
 | POST | `/api/memories/:id/photos/` | 기존 추억에 사진 추가 |
 | DELETE | `/api/photos/:id/` | 개별 사진 삭제 |
@@ -167,6 +169,7 @@ memory-app/
 │           ├── MemoryViewer.jsx
 │           ├── SlideShow.jsx
 │           ├── YoutubePlayer.jsx
+│           ├── EditMemoryModal.jsx
 │           └── AddMemoryModal.jsx
 ├── backend/
 │   ├── Dockerfile

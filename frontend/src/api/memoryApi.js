@@ -26,6 +26,21 @@ export async function createMemory({ title, description, youtube_url, memory_dat
   return res.json();
 }
 
+export async function updateMemory(id, { title, description, youtube_url, memory_date, thumbnail_index, delete_photo_ids, new_photos }) {
+  const form = new FormData();
+  if (title != null) form.append('title', title);
+  if (description != null) form.append('description', description);
+  if (youtube_url != null) form.append('youtube_url', youtube_url);
+  if (memory_date != null) form.append('memory_date', memory_date);
+  if (thumbnail_index != null) form.append('thumbnail_index', thumbnail_index);
+  if (delete_photo_ids) delete_photo_ids.forEach((id) => form.append('delete_photo_ids', id));
+  if (new_photos) new_photos.forEach((file) => form.append('new_photos', file));
+
+  const res = await fetch(`${BASE}/memories/${id}/`, { method: 'PATCH', body: form });
+  if (!res.ok) throw new Error('Failed to update memory');
+  return res.json();
+}
+
 export async function deleteMemory(id) {
   const res = await fetch(`${BASE}/memories/${id}/`, { method: 'DELETE' });
   if (!res.ok) throw new Error('Failed to delete memory');

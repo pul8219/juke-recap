@@ -30,7 +30,8 @@ def upload_file_to_s3(file_obj, filename):
         ExtraArgs={'ContentType': file_obj.content_type},
     )
     if settings.AWS_S3_CUSTOM_DOMAIN:
-        return f"https://{settings.AWS_S3_CUSTOM_DOMAIN}/{key}"
+        scheme = "http" if settings.DEBUG else "https"
+        return f"{scheme}://{settings.AWS_S3_CUSTOM_DOMAIN}/{key}"
     return f"{settings.AWS_S3_ENDPOINT_URL}/{settings.AWS_STORAGE_BUCKET_NAME}/{key}"
 
 
@@ -91,7 +92,7 @@ def memory_list(request):
     return Response(serializer.data, status=status.HTTP_201_CREATED)
 
 
-@api_view(['GET', 'DELETE'])
+@api_view(['GET', 'PATCH', 'DELETE'])
 def memory_detail(request, pk):
     try:
         memory = Memory.objects.get(pk=pk)
@@ -99,6 +100,47 @@ def memory_detail(request, pk):
         return Response(status=status.HTTP_404_NOT_FOUND)
 
     if request.method == 'GET':
+        serializer = MemoryDetailSerializer(memory)
+        return Response(serializer.data)
+
+    if request.method == 'PATCH':
+        for field in ('title', 'description', 'youtube_url', 'memory_date'):
+            if field in request.data:
+                setattr(memory, field, request.data[field])
+
+        delete_photo_ids = request.data.getlist('delete_photo_ids') if hasattr(request.data, 'getlist') else request.data.get('delete_photo_ids', [])
+        if isinstance(delete_photo_ids, str):
+            delete_photo_ids = [delete_photo_ids]
+        for photo_id in delete_photo_ids:
+            try:
+                photo = MemoryPhoto.objects.get(pk=photo_id, memory=memory)
+                try:
+                    delete_file_from_s3(photo.image_url)
+                except Exception:
+                    pass
+                photo.delete()
+            except MemoryPhoto.DoesNotExist:
+                pass
+
+        new_photos = request.FILES.getlist('new_photos')
+        max_order = memory.photos.count()
+        for i, photo in enumerate(new_photos):
+            filename = f"{uuid.uuid4()}{_get_ext(photo.name)}"
+            image_url = upload_file_to_s3(photo, filename)
+            MemoryPhoto.objects.create(memory=memory, image_url=image_url, order=max_order + i)
+
+        try:
+            thumb_idx = int(request.data.get('thumbnail_index', -1))
+        except (TypeError, ValueError):
+            thumb_idx = -1
+        all_photos = list(memory.photos.all())
+        if thumb_idx >= 0 and thumb_idx < len(all_photos):
+            memory.thumbnail = all_photos[thumb_idx].image_url
+        elif not memory.thumbnail or not memory.photos.filter(image_url=memory.thumbnail).exists():
+            first = memory.photos.first()
+            memory.thumbnail = first.image_url if first else ''
+
+        memory.save()
         serializer = MemoryDetailSerializer(memory)
         return Response(serializer.data)
 
