@@ -20,7 +20,7 @@ export default function App() {
   const [selectedMemory, setSelectedMemory] = useState(null);
   const [showModal, setShowModal] = useState(false);
   const [loading, setLoading] = useState(true);
-  const [sortOrder, setSortOrder] = useState('newest');
+  const [sortOrder, setSortOrder] = useState('oldest');
 
   const loadMemories = useCallback(async () => {
     try {
