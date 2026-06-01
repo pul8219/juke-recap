@@ -95,6 +95,7 @@ export default function EditMemoryModal({ memory, onClose, onUpdated }) {
 
   const inputStyle = {
     width: '100%',
+    maxWidth: '100%',
     minWidth: 0,
     boxSizing: 'border-box',
     padding: '12px 14px',
@@ -104,6 +105,8 @@ export default function EditMemoryModal({ memory, onClose, onUpdated }) {
     color: '#fff',
     fontSize: 15,
     outline: 'none',
+    WebkitAppearance: 'none',
+    appearance: 'none',
   };
 
   const labelStyle = {
