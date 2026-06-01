@@ -19,14 +19,15 @@ export default function MemoryViewer({ memory, onBack, onDelete, onUpdated }) {
   useEffect(() => {
     const handleKey = (e) => {
       if (e.key === 'Escape') {
-        if (showConfirm) setShowConfirm(false);
+        if (showEdit) setShowEdit(false);
+        else if (showConfirm) setShowConfirm(false);
         else onBack();
       }
       if (e.key === 'Enter' && showConfirm) onDelete();
     };
     window.addEventListener('keydown', handleKey);
     return () => window.removeEventListener('keydown', handleKey);
-  }, [showConfirm, onBack, onDelete]);
+  }, [showEdit, showConfirm, onBack, onDelete]);
 
   return (
     <div style={{

@@ -76,6 +76,7 @@ export default function AddMemoryModal({ onClose, onCreated }) {
 
   const inputStyle = {
     width: '100%',
+    minWidth: 0,
     boxSizing: 'border-box',
     padding: '12px 14px',
     borderRadius: 10,
