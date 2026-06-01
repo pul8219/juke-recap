@@ -112,8 +112,10 @@ export default function AddMemoryModal({ onClose, onCreated }) {
           width: '90%',
           maxWidth: 480,
           maxHeight: '85vh',
-          overflow: 'auto',
+          overflowX: 'hidden',
+          overflowY: 'auto',
           padding: 24,
+          boxSizing: 'border-box',
           position: 'relative',
         }}
       >
