@@ -63,8 +63,13 @@ export default function YoutubePlayer({ url }) {
           onReady: (e) => {
             e.target.playVideo();
           },
-          onError: () => {
-            setPlayError(true);
+          onError: (e) => {
+            const code = e.data;
+            // 101, 150: embed restricted / not allowed
+            // 2: invalid video ID, 5: HTML5 player error, 100: removed/private
+            if (code === 101 || code === 150 || code === 100) {
+              setPlayError(true);
+            }
           },
         },
       });
