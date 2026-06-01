@@ -33,12 +33,14 @@ function onAPIReady(cb) {
 export default function YoutubePlayer({ url }) {
   const [muted, setMuted] = useState(true);
   const [showHint, setShowHint] = useState(true);
+  const [playError, setPlayError] = useState(false);
   const playerRef = useRef(null);
   const containerRef = useRef(null);
   const videoId = useMemo(() => extractVideoId(url), [url]);
 
   useEffect(() => {
     if (!videoId) return;
+    setPlayError(false);
     loadYouTubeAPI();
 
     onAPIReady(() => {
@@ -60,6 +62,9 @@ export default function YoutubePlayer({ url }) {
         events: {
           onReady: (e) => {
             e.target.playVideo();
+          },
+          onError: () => {
+            setPlayError(true);
           },
         },
       });
@@ -106,7 +111,35 @@ export default function YoutubePlayer({ url }) {
       >
         <div ref={containerRef} />
       </div>
-      {muted && showHint && (
+      {playError && (
+        <a
+          href={url}
+          target="_blank"
+          rel="noopener noreferrer"
+          style={{
+            position: 'absolute',
+            bottom: 120,
+            right: 20,
+            zIndex: 210,
+            background: 'rgba(0,0,0,0.6)',
+            border: '1px solid rgba(255,255,255,0.2)',
+            color: '#fff',
+            borderRadius: 22,
+            padding: '8px 16px',
+            fontSize: 13,
+            display: 'flex',
+            alignItems: 'center',
+            gap: 8,
+            backdropFilter: 'blur(10px)',
+            textDecoration: 'none',
+            animation: 'fadeIn 0.5s ease',
+          }}
+        >
+          <span style={{ fontSize: 16 }}>⚠️</span>
+          임베드 제한 영상 — 탭하여 YouTube에서 듣기
+        </a>
+      )}
+      {!playError && muted && showHint && (
         <button
           onClick={handleUnmute}
           style={{
@@ -131,7 +164,7 @@ export default function YoutubePlayer({ url }) {
           탭하여 소리 켜기
         </button>
       )}
-      {muted && !showHint && (
+      {!playError && muted && !showHint && (
         <button
           onClick={handleUnmute}
           style={{
@@ -155,7 +188,7 @@ export default function YoutubePlayer({ url }) {
           🔇
         </button>
       )}
-      {!muted && (
+      {!playError && !muted && (
         <button
           onClick={handleMute}
           style={{

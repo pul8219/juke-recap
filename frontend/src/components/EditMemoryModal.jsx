@@ -95,6 +95,7 @@ export default function EditMemoryModal({ memory, onClose, onUpdated }) {
 
   const inputStyle = {
     width: '100%',
+    boxSizing: 'border-box',
     padding: '12px 14px',
     borderRadius: 10,
     border: '1px solid #3a3a3c',

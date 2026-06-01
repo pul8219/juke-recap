@@ -127,6 +127,7 @@ export default function MemoryViewer({ memory, onBack, onDelete, onUpdated }) {
         position: 'absolute', bottom: 0, left: 0, right: 0, zIndex: 205,
         background: 'linear-gradient(transparent, rgba(0,0,0,0.8))',
         padding: '40px 24px 24px',
+        pointerEvents: 'none',
       }}>
         {memory.memory_date && (
           <div style={{ fontSize: 13, color: '#8e8e93', marginBottom: 4 }}>
