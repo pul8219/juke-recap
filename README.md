@@ -20,7 +20,7 @@
 브라우저 → Nginx(80) → Frontend(3000) : 화면
                      → Backend(8000)  : API (/api/*)
                                        → PostgreSQL : 데이터 저장
-                                       → S3/MinIO   : 사진 저장
+                                       → S3/SeaweedFS : 사진 저장
 ```
 
 모든 서비스는 **Docker Compose**로 한 번에 띄울 수 있습니다.
@@ -60,7 +60,7 @@ App.jsx                    ← 최상위. 라우팅/상태 관리
 |------|------|
 | **Django 4.2** | Python 웹 프레임워크. 모델(DB 구조) 정의, URL 라우팅, ORM 제공 |
 | **Django REST Framework** | Django 위에서 REST API를 쉽게 만들어주는 도구 |
-| **boto3** | AWS S3 (또는 MinIO) 에 파일을 업로드/삭제하기 위한 Python SDK |
+| **boto3** | AWS S3 (또는 SeaweedFS) 에 파일을 업로드/삭제하기 위한 Python SDK |
 | **Gunicorn** | 프로덕션용 WSGI 서버. Django 앱을 안정적으로 서빙 |
 | **psycopg** | PostgreSQL 연결 드라이버 |
 
@@ -103,7 +103,7 @@ MemoryPhoto (사진)
 | **Docker Compose** | 모든 서비스(DB, 스토리지, 백엔드, 프론트엔드, Nginx)를 한 명령으로 실행 |
 | **Nginx** | 리버스 프록시. 브라우저 요청을 프론트엔드/백엔드로 분기 |
 | **PostgreSQL 15** | 관계형 데이터베이스. 추억과 사진 메타데이터 저장 |
-| **MinIO** (로컬) | S3 호환 오브젝트 스토리지. 로컬 개발 시 사진 저장용 |
+| **SeaweedFS** (로컬) | S3 호환 오브젝트 스토리지. 로컬 개발 시 사진 저장용 |
 | **AWS S3** (프로덕션) | 프로덕션 환경에서의 사진 저장소 |
 
 ## 로컬 개발 환경 실행
@@ -134,9 +134,9 @@ docker compose --env-file .env.local up --build
 | `DJANGO_DEBUG` | 디버그 모드 (`True`/`False`) |
 | `ALLOWED_HOSTS` | 허용할 호스트명 (쉼표 구분) |
 | `DB_NAME` / `DB_USER` / `DB_PASSWORD` | PostgreSQL 접속 정보 |
-| `AWS_ACCESS_KEY_ID` / `AWS_SECRET_ACCESS_KEY` | S3/MinIO 인증 정보 |
+| `AWS_ACCESS_KEY_ID` / `AWS_SECRET_ACCESS_KEY` | S3/SeaweedFS 인증 정보 |
 | `AWS_STORAGE_BUCKET_NAME` | 사진 저장 버킷 이름 |
-| `AWS_S3_ENDPOINT_URL` | MinIO 주소 (로컬: `http://minio:9000`, 프로덕션: 비워둠) |
+| `AWS_S3_ENDPOINT_URL` | SeaweedFS 주소 (로컬: `http://seaweedfs:9000`, 프로덕션: 비워둠) |
 | `AWS_S3_CUSTOM_DOMAIN` | 이미지 URL 생성 시 사용할 도메인 |
 | `CORS_ALLOWED_ORIGINS` | CORS 허용 출처 |
 

@@ -15,35 +15,54 @@ services:
       timeout: 5s
       retries: 5
 
-  minio:
-    image: minio/minio
-    command: server /data --console-address ":9001"
+  # S3 호환 스토리지 (로컬 개발용 사진 저장소)
+  # - S3 API: 9000 포트
+  # - 관리자 키는 .env.local 의 AWS_ACCESS_KEY_ID / AWS_SECRET_ACCESS_KEY
+  # - 버킷 객체는 로그인 없이 읽기만 허용 (브라우저가 사진 URL 을 직접 읽기 때문)
+  seaweedfs:
+    image: chrislusf/seaweedfs:4.48
     environment:
-      MINIO_ROOT_USER: ${AWS_ACCESS_KEY_ID}
-      MINIO_ROOT_PASSWORD: ${AWS_SECRET_ACCESS_KEY}
+      S3_ACCESS_KEY: ${AWS_ACCESS_KEY_ID}
+      S3_SECRET_KEY: ${AWS_SECRET_ACCESS_KEY}
+      S3_BUCKET: ${AWS_STORAGE_BUCKET_NAME}
+    entrypoint: ["/bin/sh", "-c"]
+    command:
+      - |
+        cat > /etc/seaweedfs-s3.json <<JSON
+        {"identities": [
+          {"name": "admin",
+           "credentials": [{"accessKey": "$$S3_ACCESS_KEY", "secretKey": "$$S3_SECRET_KEY"}],
+           "actions": ["Admin", "Read", "List", "Tagging", "Write"]},
+          {"name": "anonymous", "actions": ["Read:$$S3_BUCKET"]}
+        ]}
+        JSON
+        exec /entrypoint.sh server -s3 -s3.port=9000 -s3.config=/etc/seaweedfs-s3.json
     ports:
       - "9000:9000"
-      - "9001:9001"
+      # 파일 관리 화면 (로그인 없음, 이 PC 에서만 접속 가능)
+      - "127.0.0.1:8888:8888"
     volumes:
-      - minio_data:/data
+      - seaweedfs_data:/data
     healthcheck:
-      test: ["CMD", "mc", "ready", "local"]
+      test: ["CMD", "wget", "-q", "-O", "/dev/null", "http://127.0.0.1:9000/healthz"]
       interval: 5s
       timeout: 5s
-      retries: 5
+      retries: 20
 
-  minio-init:
-    image: minio/mc
+  s3-init:
+    image: chrislusf/seaweedfs:4.48
     depends_on:
-      minio:
+      seaweedfs:
         condition: service_healthy
-    entrypoint: >
-      /bin/sh -c "
-      mc alias set local http://minio:9000 ${AWS_ACCESS_KEY_ID} ${AWS_SECRET_ACCESS_KEY};
-      mc mb --ignore-existing local/${AWS_STORAGE_BUCKET_NAME};
-      mc anonymous set download local/${AWS_STORAGE_BUCKET_NAME};
-      exit 0;
-      "
+    environment:
+      S3_BUCKET: ${AWS_STORAGE_BUCKET_NAME}
+    entrypoint: ["/bin/sh", "-c"]
+    # 버킷이 이미 있으면 weed shell 이 실패(exit 1)로 끝나므로, 그 경우도 성공으로 처리한다.
+    command:
+      - |
+        out=$$(echo "s3.bucket.create -name $$S3_BUCKET" | weed shell -master=seaweedfs:9333 2>&1)
+        echo "$$out"
+        echo "$$out" | grep -qE "created bucket|already exists"
 
   backend:
     build: ./backend
@@ -61,7 +80,7 @@ services:
     depends_on:
       db:
         condition: service_healthy
-      minio-init:
+      s3-init:
         condition: service_completed_successfully
 
   frontend:
@@ -86,4 +105,4 @@ services:
 
 volumes:
   postgres_data:
-  minio_data:
+  seaweedfs_data:
