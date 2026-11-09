@@ -1,21 +1,10 @@
 import { useState, useEffect, useCallback } from 'react';
-import LockScreen from './components/LockScreen';
 import MemoryGrid from './components/MemoryGrid';
 import MemoryViewer from './components/MemoryViewer';
 import AddMemoryModal from './components/AddMemoryModal';
 import { fetchMemories, fetchMemory, deleteMemory } from './api/memoryApi';
 
-const SESSION_KEY = 'unlock_ts';
-const SESSION_TTL = 30 * 60 * 1000;
-
-function isSessionValid() {
-  const ts = sessionStorage.getItem(SESSION_KEY);
-  if (!ts) return false;
-  return Date.now() - Number(ts) < SESSION_TTL;
-}
-
 export default function App() {
-  const [unlocked, setUnlocked] = useState(isSessionValid);
   const [memories, setMemories] = useState([]);
   const [selectedMemory, setSelectedMemory] = useState(null);
   const [showModal, setShowModal] = useState(false);
@@ -68,13 +57,6 @@ export default function App() {
     setShowModal(false);
     loadMemories();
   };
-
-  if (!unlocked) {
-    return <LockScreen onUnlock={() => {
-      sessionStorage.setItem(SESSION_KEY, String(Date.now()));
-      setUnlocked(true);
-    }} />;
-  }
 
   if (selectedMemory) {
     return (

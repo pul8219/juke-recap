@@ -5,7 +5,6 @@
 
 ## 주요 기능
 
-- **잠금 화면** — 6자리 PIN 인증 (30분간 세션 유지)
 - **추억 만들기** — 제목, 날짜, 설명, 사진(드래그 앤 드롭), YouTube 배경음악 설정
 - **대표 썸네일 지정** — 여러 사진 중 하나를 클릭해서 대표 이미지 선택
 - **추억 조회** — 전체화면 사진 슬라이드쇼 + YouTube 배경음악 자동 재생
@@ -38,8 +37,7 @@ Nginx가 앞에서 요청을 받아 프론트엔드/백엔드로 나눠줍니다
 **컴포넌트 구조:**
 
 ```
-App.jsx                    ← 최상위. 인증/라우팅/상태 관리
-├── LockScreen.jsx         ← PIN 입력 잠금 화면
+App.jsx                    ← 최상위. 라우팅/상태 관리
 ├── MemoryGrid.jsx         ← 추억 카드 목록 (그리드 레이아웃)
 │   └── MemoryCard.jsx     ← 개별 추억 카드 (썸네일 + 제목 + 날짜)
 ├── MemoryViewer.jsx       ← 추억 상세 보기 (전체화면)
@@ -50,7 +48,7 @@ App.jsx                    ← 최상위. 인증/라우팅/상태 관리
 ```
 
 > **React 핵심 개념 간단 정리:**
-> - **컴포넌트** = 화면의 한 조각을 담당하는 함수. `function LockScreen() { return <div>...</div> }` 형태
+> - **컴포넌트** = 화면의 한 조각을 담당하는 함수. `function MemoryCard() { return <div>...</div> }` 형태
 > - **props** = 부모가 자식에게 전달하는 데이터. `<MemoryCard memory={data} />` → `memory`가 props
 > - **state** (`useState`) = 컴포넌트 안에서 변하는 값. 값이 바뀌면 화면이 자동으로 다시 그려짐
 > - **effect** (`useEffect`) = 컴포넌트가 화면에 나타나거나 특정 값이 바뀔 때 실행되는 코드
@@ -163,7 +161,6 @@ memory-app/
 │       ├── api/
 │       │   └── memoryApi.js   # 백엔드 API 호출 함수
 │       └── components/
-│           ├── LockScreen.jsx
 │           ├── MemoryGrid.jsx
 │           ├── MemoryCard.jsx
 │           ├── MemoryViewer.jsx
