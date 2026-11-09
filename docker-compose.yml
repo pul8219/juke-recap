@@ -17,7 +17,6 @@ services:
 
   minio:
     image: minio/minio
-    platform: linux/amd64
     command: server /data --console-address ":9001"
     environment:
       MINIO_ROOT_USER: ${AWS_ACCESS_KEY_ID}
@@ -35,7 +34,6 @@ services:
 
   minio-init:
     image: minio/mc
-    platform: linux/amd64
     depends_on:
       minio:
         condition: service_healthy
