@@ -1,4 +1,3 @@
-import os
 import uuid
 import boto3
 from django.conf import settings
@@ -39,14 +38,6 @@ def delete_file_from_s3(image_url):
     s3 = get_s3_client()
     key = image_url.split(f"/{settings.AWS_STORAGE_BUCKET_NAME}/")[-1]
     s3.delete_object(Bucket=settings.AWS_STORAGE_BUCKET_NAME, Key=key)
-
-
-@api_view(['POST'])
-def verify_pin(request):
-    pin = request.data.get('pin', '')
-    if pin == os.environ.get('APP_PASSCODE', ''):
-        return Response({'ok': True})
-    return Response({'ok': False}, status=status.HTTP_401_UNAUTHORIZED)
 
 
 @api_view(['GET', 'POST'])

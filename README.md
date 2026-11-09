@@ -68,7 +68,6 @@ App.jsx                    ← 최상위. 라우팅/상태 관리
 
 | Method | URL | 설명 |
 |--------|-----|------|
-| POST | `/api/verify-pin/` | PIN 인증 |
 | GET | `/api/memories/` | 전체 추억 목록 |
 | POST | `/api/memories/` | 새 추억 생성 (사진 포함) |
 | GET | `/api/memories/:id/` | 추억 상세 조회 |
@@ -139,7 +138,6 @@ docker compose --env-file .env.local up --build
 | `AWS_STORAGE_BUCKET_NAME` | 사진 저장 버킷 이름 |
 | `AWS_S3_ENDPOINT_URL` | MinIO 주소 (로컬: `http://minio:9000`, 프로덕션: 비워둠) |
 | `AWS_S3_CUSTOM_DOMAIN` | 이미지 URL 생성 시 사용할 도메인 |
-| `APP_PASSCODE` | 잠금 화면 PIN 번호 |
 | `CORS_ALLOWED_ORIGINS` | CORS 허용 출처 |
 
 ## 프로젝트 구조
